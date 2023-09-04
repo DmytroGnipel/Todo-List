@@ -1,0 +1,31 @@
+p {
+    color:green;
+}
+
+body {
+    margin: 0%;
+    background-color: grey;
+}
+
+.container {
+    width: 80vw;
+    height: 100vh;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 5fr;
+    grid-template-rows: 1fr 10fr;
+    
+}
+
+.header {
+    background-color: yellow;
+    grid-area: 1 / 1 / 2 / -1;
+}
+
+.side {
+    background-color: pink;
+}
+
+.content {
+    background-color: rgb(0, 140, 255);
+}
