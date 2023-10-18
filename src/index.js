@@ -1,6 +1,6 @@
-import {initialProject, todoList, createTodo, addTodo, createProject, removeTodo, addProject, 
-    toggleIsComplete, changePriority, changeTodo} from './logic'
-
+import {todoList, createTodo, addTodo, createProject, removeTodo, addProject, 
+    toggleCompleteness, changePriority, changeTodo, changeLocalStorage,
+    month} from './logic'
 
 //arrange divs with projects in the div 'content'
 function arrangeProjects() {
@@ -13,10 +13,22 @@ const content = document.querySelector('.content')
         projectDiv.innerHTML = `<h4>${property}</h4>`
         let counter = -1
         for (const elem of todoList[property]) {
+            let valueOfTextDecoration
+            if (elem.isComplete) valueOfTextDecoration = 'line-through'
+            else valueOfTextDecoration = 'none'
             projectDiv.innerHTML += `
-            <p>${elem.title} until ${elem.date}
-            <button data-number='${counter + 1}' data-name='${property}' class='editButton'>ed</button></p> 
-            <button data-number='${counter + 1}' data-name='${property}' class='removeButton'>X</button></p>
+            <p style='background-color:${elem.priority}; text-decoration: ${valueOfTextDecoration}' data-number='${counter + 1}' data-name='${property}'>${elem.title} until ${elem.date}
+            <button data-number='${counter + 1}' data-name='${property}' class='editButton'>edit todo</button> 
+            <button data-number='${counter + 1}' data-name='${property}' class='removeButton'>delete todo</button>
+            <label for='iScomplete'>complete</label>
+            <input type='checkbox' data-number='${counter + 1}' data-name='${property}' id='iScomplete'>
+            <select data-number='${counter + 1}' data-name='${property}'>
+            <option value="">Choose a priority</option>
+            <option value="green">green</option>
+            <option value="yellow">yellow</option>
+            <option value="red">red</option>
+            </select>
+            </p>
             `
             counter++
         }
@@ -52,15 +64,15 @@ removeTodoPara()
 
 
 //add new project//2
+
 document.querySelector('.addProjectLink').addEventListener('click', function(){
     popUp(1)
-    const input = document.querySelector('input')
+    const input = document.querySelector('input[type=text]')
     input.placeholder = 'enter a name of the new project'
     document.querySelector('.popUp button').addEventListener('click', function() {
     if (input.value) {
         let newProject = createProject(input.value)
         addProject(newProject)
-        console.log(todoList)
         fourFunctions()
     }
     else {
@@ -74,25 +86,24 @@ function createNewTodo() {
     const buttonsForNewTodos = document.querySelectorAll('.addTodoButton')
     for (let elem of buttonsForNewTodos) {
         elem.addEventListener('click', function() {
-            console.log(todoList)
             const projectName = this.dataset.projectName
             this.remove()
-            popUp(6)        
-            let array = ['title', 'date', 'description', 'notes', 'completeness', 'priority']
-            const inputs = document.querySelectorAll('input')
-            for (let i = 0; i < 6; i++) {
+            popUp(4)        
+            let array = ['title', 'date', 'description', 'notes']
+            const inputs = document.querySelectorAll('input[type=text]')
+            for (let i = 0; i < 4; i++) {
                 inputs[i].placeholder = `${array[i]}`
             }          
             document.querySelector('.popUp button').addEventListener('click', function() {
-                 
             for (const input of inputs) {
                 if (!input.value) input.value = ''
             }
                 let object = createTodo(inputs[0].value, inputs[1].value, inputs[2].value,
-                     inputs[3].value, inputs[4].value, inputs[5].value)
-                     console.log(object)
+                     inputs[3].value)
                      addTodo(object, todoList[elem.dataset.projectName])
-                     fourFunctions()  
+                     fourFunctions()
+                     console.log(todoList)  
+                     
             })  
         })
     }
@@ -104,20 +115,22 @@ function editTodo() {
     const buttons = document.querySelectorAll('.editButton')
     for (const button of buttons) {
         button.addEventListener('click', function() {
-            popUp(6)
-            const inputs = document.getElementsByTagName('input')
+            popUp(4)
+            const inputs = document.querySelectorAll('input[type=text]')
             const paras = document.querySelectorAll('.popUp p')
             const targetTodo = todoList[button.dataset.name][button.dataset.number]
             let counter = 0
             for (const prop in targetTodo) {
-                paras[counter].textContent = prop
-                inputs[counter].value = targetTodo[prop]
-                counter++
+                if (prop !== 'isComplete' && prop !== 'priority') {
+                    paras[counter].textContent = prop
+                    inputs[counter].value = targetTodo[prop]
+                    counter++
+                }
             }
             const acceptButton = document.querySelector('.popUp button')
             acceptButton.addEventListener('click', function() {
                 let newTodo = createTodo(inputs[0].value, inputs[1].value, inputs[2].value,
-                inputs[3].value, inputs[4].value, inputs[5].value)
+                inputs[3].value)
                 changeTodo(button.dataset.name, button.dataset.number, newTodo)
                 fourFunctions()
             })
@@ -126,7 +139,7 @@ function editTodo() {
 }
 editTodo()
 
-//appear pop-up with six inptus and button 'accept'//assistive function
+//appear pop-up with inptus and button 'accept'//assistive function
 function popUp(amountOfInput) {
     const pop = document.createElement('div')
     pop.classList.add('popUp')
@@ -134,20 +147,25 @@ function popUp(amountOfInput) {
     const acceptButton = document.createElement('button')
     acceptButton.textContent = 'accept'
     const closeLink = document.createElement('a')
-    closeLink.href = ''
+    closeLink.href = '#'
     closeLink.textContent = 'X'
     closeLink.classList.add = ('closeLink')
-    closeLink.addEventListener('click', function(){
-        pop.remove()
-    })
+
     pop.append(closeLink)
         for (let i = 0; i < amountOfInput; i++) {
         const para = document.createElement('p')
         const input = document.createElement('input')
+        input.type = 'text'
         pop.append(para, input)
     }
     pop.append(acceptButton)
     content.appendChild(pop)
+    closeLink.addEventListener('click', function(){
+        pop.remove()
+        
+        
+
+    })
 
 }
 //four repeating functions
@@ -156,6 +174,58 @@ function fourFunctions() {
     removeTodoPara()
     editTodo()
     createNewTodo()
+    toggleCheckboxes()
+    setSelects()
+    changeLocalStorage()
+    
 }
+
+
+function toggleCheckboxes() {
+const checkboxes = document.querySelectorAll('input[type=checkbox]')
+for (const checkbox of checkboxes)
+checkbox.addEventListener('click', function() {
+    let targetTodo = todoList[this.dataset.name][this.dataset.number]
+    toggleCompleteness(targetTodo)
+    changeLocalStorage()
+    const para = document.querySelector(`p[data-number='${this.dataset.number}'][data-name=${this.dataset.name}]`)
+    if (targetTodo.isComplete) para.style.textDecoration = 'line-through'
+    else para.style.textDecoration = 'none'
+    
+})}
+toggleCheckboxes()
+
+function setSelects() {
+const selects = document.querySelectorAll('select')
+for (const select of selects)
+select.addEventListener('change', function(){
+    let targetTodo = todoList[this.dataset.name][this.dataset.number]
+    changePriority(targetTodo, `${this.value}`)
+    const para = document.querySelector(`p[data-number='${this.dataset.number}'][data-name=${this.dataset.name}]`)
+	para.style.backgroundColor = targetTodo.priority
+    changeLocalStorage()
+})}
+setSelects()
+
+//function showInAMonth () {
+    //cleaning()
+    //const todosInAMonth = month()
+    //for (const todo of todosInAMonth) {
+        //const para
+    //}
+    //console.log(todosInAMonth)
+    
+    
+    
+    
+    
+//}
+//showInAMonth ()
+
+
+
+
+
+
 
 
