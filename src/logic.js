@@ -55,11 +55,10 @@ const todoList = chooceTodoList()
 
 const counter = 3
 //create single todo
-const createTodo = (title, dueDate, description, notes) => {
+const createTodo = (title, dueDate, description, notes, nameProject) => {
     const isComplete = false
     const priority = 'green'
     const id = counter
-    const nameProject = ''
     return {
         title, dueDate, description, notes, priority, isComplete, id, nameProject
     }

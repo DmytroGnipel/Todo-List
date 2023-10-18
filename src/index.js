@@ -59,6 +59,7 @@ const content = document.querySelector('.content')
 }   //add button for creating new todo in the project
         const addTodoButton = document.createElement('button')
         addTodoButton.textContent = 'Add new task'
+        addTodoButton.classList.add('addTodoButton')
         addTodoButton.dataset.projectName = projectName
         projectDiv.append(addTodoButton)   
         
@@ -91,7 +92,6 @@ removeTodoInDOM()
 
 
 //add new project
-
 document.querySelector('.addProjectLink').addEventListener('click', function () {
     popUp(1)
     const input = document.querySelector('input[type=text]')
@@ -108,11 +108,11 @@ document.querySelector('.addProjectLink').addEventListener('click', function () 
     })
 })
 
-//create new todo for a project in the DOM//3
-function createNewTodo() {
+//create new todo for a project in the DOM
+function createTodoInDOM () {
     const buttonsForNewTodos = document.querySelectorAll('.addTodoButton')
-    for (let elem of buttonsForNewTodos) {
-        elem.addEventListener('click', function() {
+    for (let button of buttonsForNewTodos) {
+        button.addEventListener('click', function () {
             const projectName = this.dataset.projectName
             this.remove()
             popUp(4)        
@@ -121,21 +121,16 @@ function createNewTodo() {
             for (let i = 0; i < 4; i++) {
                 inputs[i].placeholder = `${array[i]}`
             }          
-            document.querySelector('.popUp button').addEventListener('click', function() {
-            for (const input of inputs) {
-                if (!input.value) input.value = ''
-            }
-                let object = createTodo(inputs[0].value, inputs[1].value, inputs[2].value,
-                     inputs[3].value)
-                     addTodo(object, todoList[elem.dataset.projectName])
-                     fourFunctions()
-                      
-                     
+            document.querySelector('.popUp button').addEventListener('click', function () {
+                let todo = createTodo(inputs[0].value, inputs[1].value, inputs[2].value, inputs[3].value, projectName)
+                addTodo(todo, todoList[projectName])
+                console.log(todoList)
+                fourFunctions()
             })  
         })
     }
 }
-createNewTodo()
+createTodoInDOM ()
 
 //edit todos in the DOM//4
 function editTodo() {
@@ -200,7 +195,7 @@ function fourFunctions() {
     arrangeProjects()
     removeTodoInDOM()
     //editTodo()
-    //createNewTodo()
+    createTodoInDOM()
     //toggleCheckboxes()
     //setSelects()
     //changeLocalStorage()
