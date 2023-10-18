@@ -4,27 +4,33 @@ const defaultTodoList = {
     UntilNewYear: [
         {
             title: 'Losing weight',
-            date: '16.11.2023',
+            dueDate: '16.11.2023',
             description: 'in order to have better look on my birthday I want to lose 5 kg until its date',
             notes: 'I want to lose wheigt by restrictings in my diet and conducting active excersises',
             isComplete: false,
-            priority: 'green'
+            priority: 'green',
+            id: 0,
+            nameProject: 'UntilNewYear'
         },
         {
             title: 'Learning songs',
-            date: '31.12.2023', 
+            dueDate: '31.12.2023', 
             description: 'I want to perform at the New year"s party and because of that I have to learn at least 5 new songs',
             notes: 'My favorite girl Sara very romatic, so I want learn Ed Sheerans songs about love',
-            isComplete: false,
-            priority: 'green'
+            isComplete: true,
+            priority: 'green',
+            id: 1,
+            nameProject: 'UntilNewYear'
         },
         {
             title: 'Complete Todo List',
-            date: '15.09.2023', 
+            dueDate: '15.09.2023', 
             description: 'This project from from theodinproject.com is a part of my long javascript journey',
             notes: 'Day when I should finalize the project may be postponed. It depends on circumstances',
             isComplete: false,
-            priority: 'green'
+            priority: 'green',
+            id: 2,
+            nameProject: 'UntilNewYear'
         }
     ]
 }
@@ -46,17 +52,16 @@ const todoList = chooceTodoList()
 
 
 
-//add initial project to initial todoList
-//addProject(initialProject)
-const counter = 1
+
+const counter = 3
 //create single todo
-const createTodo = (title, date, description, notes) => {
+const createTodo = (title, dueDate, description, notes) => {
     const isComplete = false
     const priority = 'green'
     const id = counter
     const nameProject = ''
     return {
-        title, date, description, notes, priority, isComplete, id, nameProject
+        title, dueDate, description, notes, priority, isComplete, id, nameProject
     }
     counter++
 }
@@ -70,9 +75,16 @@ const addTodo = (todo, project) => {
 }
 
 //remove single todo from a project
-const removeTodo = (IndexTodo, projectName) => {
+const removeTodo = (todoId, projectName) => {
     const project = todoList[projectName]
-    project.splice(IndexTodo, 1)
+    for (const todo of project) {   
+        if (todo.id == todoId) {
+            const targetTodo = todo
+            const indexTodo = project.indexOf(targetTodo)
+            project.splice(indexTodo, 1)
+            break
+        }
+    }
 }
 
 //create project
@@ -141,14 +153,5 @@ return array
 
 
 export {todoList, createTodo, addTodo,
-    createProject, addProject, toggleCompleteness, changePriority, removeTodo, changeTodo, changeLocalStorage,
-    month}
-
-
-
-
-
-
-
-    
-
+    createProject, addProject, toggleCompleteness, changePriority, removeTodo, changeTodo, changeLocalStorage
+}

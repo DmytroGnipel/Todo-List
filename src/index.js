@@ -1,61 +1,88 @@
 import {todoList, createTodo, addTodo, createProject, removeTodo, addProject, 
-    toggleCompleteness, changePriority, changeTodo, changeLocalStorage,
-    month} from './logic'
+    toggleCompleteness, changePriority, changeTodo, changeLocalStorage} from './logic'
 
 //arrange divs with projects in the div 'content'
 function arrangeProjects() {
 cleaning()
 const content = document.querySelector('.content')
-    for (const property in todoList) {
+//loop for arrangement projects
+    for (const projectName in todoList) {
         const projectDiv = document.createElement('div')
-        projectDiv.dataset.projectName = property
         projectDiv.classList.add('projectDiv')
-        projectDiv.innerHTML = `<h4>${property}</h4>`
-        let counter = -1
-        for (const elem of todoList[property]) {
-            let valueOfTextDecoration
-            if (elem.isComplete) valueOfTextDecoration = 'line-through'
-            else valueOfTextDecoration = 'none'
-            projectDiv.innerHTML += `
-            <p style='background-color:${elem.priority}; text-decoration: ${valueOfTextDecoration}' data-number='${counter + 1}' data-name='${property}'>${elem.title} until ${elem.date}
-            <button data-number='${counter + 1}' data-name='${property}' class='editButton'>edit todo</button> 
-            <button data-number='${counter + 1}' data-name='${property}' class='removeButton'>delete todo</button>
-            <label for='iScomplete'>complete</label>
-            <input type='checkbox' data-number='${counter + 1}' data-name='${property}' id='iScomplete'>
-            <select data-number='${counter + 1}' data-name='${property}'>
-            <option value="">Choose a priority</option>
-            <option value="green">green</option>
-            <option value="yellow">yellow</option>
-            <option value="red">red</option>
-            </select>
-            </p>
-            `
-            counter++
-        }
-        content.appendChild(projectDiv)
-        //add button for adding new todos
+        const projectDivHeader = document.createElement('h4')
+        projectDivHeader.textContent = projectName
+        projectDiv.append(projectDivHeader)
+        content.append(projectDiv)
+        const project = todoList[projectName]
+        //loop for arrangement todos
+        for (const todo of project) {
+            const todoDiv = document.createElement('div')
+            todoDiv.classList.add('todoDiv')
+            const editButton = document.createElement('button')
+            editButton.textContent = 'Edit todo'
+            editButton.dataset.projectName = projectName
+            editButton.dataset.id = todo.id
+            const removeButton = document.createElement('button')
+            removeButton.textContent = 'Remove todo'
+            removeButton.classList.add('removeButton')
+            removeButton.dataset.projectName = projectName
+            removeButton.dataset.id = todo.id
+            const completnessTodo = todo.isComplete
+            completnessTodo ? todoDiv.style.textDecoration = 'line-through' : todoDiv.style.textDecoration = 'none'
+            todoDiv.style.backgroundColor = todo.priority
+
+            //create select to choose priority
+            const priorityChanger = document.createElement('select')
+            priorityChanger.dataset.projectName = projectName
+            priorityChanger.dataset.id = todo.id
+            const arryForPriorityChanger = ['Choose a priority', 'green', 'yellow', 'red']
+            for (let i = 0; i < 4; i++) {
+                const option = document.createElement('option')
+                option.textContent = arryForPriorityChanger[i]
+                option.setAttribute('value', `${arryForPriorityChanger[i]}`)
+                priorityChanger.append(option)
+            }
+
+            //create checkbox to change completness
+            const label = document.createElement('label')
+            label.textContent = 'complete'
+            label.setAttribute('for', 'iScomplete')
+            const checkbox = document.createElement('input')
+            checkbox.setAttribute('type', 'checkbox')
+            checkbox.setAttribute('id', 'iScomplete')
+                
+            //compose div with todo
+            todoDiv.append(todo.title, ' until ', todo.dueDate,  editButton, priorityChanger, label, checkbox, removeButton)
+            //add div with todo into projects div
+            projectDiv.append(todoDiv)  
+            
+}   //add button for creating new todo in the project
         const addTodoButton = document.createElement('button')
-        addTodoButton.textContent = 'Add todo to the project'
-        addTodoButton.classList.add('addTodoButton')
-        addTodoButton.dataset.projectName = property
-        projectDiv.insertAdjacentElement('beforeend', addTodoButton)
+        addTodoButton.textContent = 'Add new task'
+        addTodoButton.dataset.projectName = projectName
+        projectDiv.append(addTodoButton)   
+        
     }
-    
 }
 arrangeProjects()
+
+
+
+////////////////////////////////////////////////
 //cleaning old divs before arrangement new ones
 function cleaning () {
-   const divs = document.querySelectorAll('.content div')
-   for (const elem of divs)
-   elem.remove()
+    const content = document.querySelector('.content').innerHTML=''
 }
 
-//remove todo from projects div//1
+
+//remove todos from projects
 function removeTodoPara() {
+    
 const buttons = document.querySelectorAll('.removeButton')
 for (const button of buttons) {
     button.addEventListener('click', function () {
-        removeTodo(this.dataset.number, this.dataset.name)
+        removeTodo(this.dataset.id, this.dataset.projectName)
+        
         fourFunctions()
         })
 }
@@ -102,7 +129,7 @@ function createNewTodo() {
                      inputs[3].value)
                      addTodo(object, todoList[elem.dataset.projectName])
                      fourFunctions()
-                     console.log(todoList)  
+                      
                      
             })  
         })
@@ -172,11 +199,11 @@ function popUp(amountOfInput) {
 function fourFunctions() {
     arrangeProjects()
     removeTodoPara()
-    editTodo()
-    createNewTodo()
-    toggleCheckboxes()
-    setSelects()
-    changeLocalStorage()
+    //editTodo()
+    //createNewTodo()
+    //toggleCheckboxes()
+    //setSelects()
+    //changeLocalStorage()
     
 }
 
