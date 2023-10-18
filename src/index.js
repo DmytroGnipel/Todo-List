@@ -76,7 +76,7 @@ function cleaning () {
 
 
 //remove todos from projects
-function removeTodoPara() {
+function removeTodoInDOM() {
     
 const buttons = document.querySelectorAll('.removeButton')
 for (const button of buttons) {
@@ -87,24 +87,24 @@ for (const button of buttons) {
         })
 }
 }
-removeTodoPara()
+removeTodoInDOM()
 
 
-//add new project//2
+//add new project
 
-document.querySelector('.addProjectLink').addEventListener('click', function(){
+document.querySelector('.addProjectLink').addEventListener('click', function () {
     popUp(1)
     const input = document.querySelector('input[type=text]')
-    input.placeholder = 'enter a name of the new project'
-    document.querySelector('.popUp button').addEventListener('click', function() {
-    if (input.value) {
-        let newProject = createProject(input.value)
-        addProject(newProject)
-        fourFunctions()
-    }
-    else {
-    alert('Your project must to have a name')
-    }
+    input.placeholder = 'enter a name for new project'
+    document.querySelector('.popUp button').addEventListener('click', function () {
+        if (input.value) {
+            const newProject = createProject(input.value)
+            addProject(newProject)
+            fourFunctions()
+        }
+        else {
+            alert('Your project must to have a name')
+        }
     })
 })
 
@@ -198,7 +198,7 @@ function popUp(amountOfInput) {
 //four repeating functions
 function fourFunctions() {
     arrangeProjects()
-    removeTodoPara()
+    removeTodoInDOM()
     //editTodo()
     //createNewTodo()
     //toggleCheckboxes()

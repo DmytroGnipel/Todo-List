@@ -17,7 +17,7 @@ const defaultTodoList = {
             dueDate: '31.12.2023', 
             description: 'I want to perform at the New year"s party and because of that I have to learn at least 5 new songs',
             notes: 'My favorite girl Sara very romatic, so I want learn Ed Sheerans songs about love',
-            isComplete: true,
+            isComplete: false,
             priority: 'green',
             id: 1,
             nameProject: 'UntilNewYear'
