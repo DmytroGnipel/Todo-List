@@ -55,10 +55,10 @@ const todoList = chooceTodoList()
 
 const counter = 3
 //create single todo
-const createTodo = (title, dueDate, description, notes, nameProject) => {
+const createTodo = (title, dueDate, description, notes, nameProject, id) => {
     const isComplete = false
     const priority = 'green'
-    const id = counter
+    if (!id) id = counter
     return {
         title, dueDate, description, notes, priority, isComplete, id, nameProject
     }
@@ -67,23 +67,26 @@ const createTodo = (title, dueDate, description, notes, nameProject) => {
 
 
 
-
 //add single todo to a project
 const addTodo = (todo, project) => {
     project.push(todo)
 }
 
+const searchTodobyId = (todoId, projectName) => {
+    const project = todoList[projectName]
+       for (const todo of project) {
+        if (todo.id == todoId) {
+            return todo
+        }
+    }
+}
+
 //remove single todo from a project
 const removeTodo = (todoId, projectName) => {
     const project = todoList[projectName]
-    for (const todo of project) {   
-        if (todo.id == todoId) {
-            const targetTodo = todo
-            const indexTodo = project.indexOf(targetTodo)
-            project.splice(indexTodo, 1)
-            break
-        }
-    }
+    const targetTodo = searchTodobyId(todoId, projectName)
+    const indexTodo = project.indexOf(targetTodo)
+    project.splice(indexTodo, 1)
 }
 
 //create project
@@ -152,5 +155,5 @@ return array
 
 
 export {todoList, createTodo, addTodo,
-    createProject, addProject, toggleCompleteness, changePriority, removeTodo, changeTodo, changeLocalStorage
+    createProject, addProject, toggleCompleteness, changePriority, removeTodo, changeTodo, searchTodobyId, changeLocalStorage
 }

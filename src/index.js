@@ -1,5 +1,5 @@
 import {todoList, createTodo, addTodo, createProject, removeTodo, addProject, 
-    toggleCompleteness, changePriority, changeTodo, changeLocalStorage} from './logic'
+    toggleCompleteness, changePriority, changeTodo, searchTodobyId, changeLocalStorage} from './logic'
 
 //arrange divs with projects in the div 'content'
 function arrangeProjects() {
@@ -21,6 +21,7 @@ const content = document.querySelector('.content')
             const editButton = document.createElement('button')
             editButton.textContent = 'Edit todo'
             editButton.dataset.projectName = projectName
+            editButton.classList.add('editButton')
             editButton.dataset.id = todo.id
             const removeButton = document.createElement('button')
             removeButton.textContent = 'Remove todo'
@@ -124,7 +125,6 @@ function createTodoInDOM () {
             document.querySelector('.popUp button').addEventListener('click', function () {
                 let todo = createTodo(inputs[0].value, inputs[1].value, inputs[2].value, inputs[3].value, projectName)
                 addTodo(todo, todoList[projectName])
-                console.log(todoList)
                 fourFunctions()
             })  
         })
@@ -133,33 +133,36 @@ function createTodoInDOM () {
 createTodoInDOM ()
 
 //edit todos in the DOM//4
-function editTodo() {
+function editTodoInDOM () {
     const buttons = document.querySelectorAll('.editButton')
     for (const button of buttons) {
         button.addEventListener('click', function() {
             popUp(4)
             const inputs = document.querySelectorAll('input[type=text]')
             const paras = document.querySelectorAll('.popUp p')
-            const targetTodo = todoList[button.dataset.name][button.dataset.number]
+            const targetTodo = searchTodobyId(this.dataset.id, this.dataset.projectName)
             let counter = 0
             for (const prop in targetTodo) {
-                if (prop !== 'isComplete' && prop !== 'priority') {
+                if (prop !== 'isComplete' &&
+                prop !== 'priority' &&
+                prop !== 'nameProject' &&
+                prop !== 'id') {
                     paras[counter].textContent = prop
                     inputs[counter].value = targetTodo[prop]
                     counter++
                 }
             }
             const acceptButton = document.querySelector('.popUp button')
-            acceptButton.addEventListener('click', function() {
-                let newTodo = createTodo(inputs[0].value, inputs[1].value, inputs[2].value,
-                inputs[3].value)
-                changeTodo(button.dataset.name, button.dataset.number, newTodo)
+            acceptButton.addEventListener('click', () => {
+                const newTodo = createTodo(inputs[0].value, inputs[1].value, inputs[2].value,
+                inputs[3].value, this.dataset.projectName, this.dataset.id)
+                changeTodo(this.dataset.projectName, this.dataset.id, newTodo)
                 fourFunctions()
             })
         })
     }
 }
-editTodo()
+editTodoInDOM ()
 
 //appear pop-up with inptus and button 'accept'//assistive function
 function popUp(amountOfInput) {
@@ -194,8 +197,8 @@ function popUp(amountOfInput) {
 function fourFunctions() {
     arrangeProjects()
     removeTodoInDOM()
-    //editTodo()
     createTodoInDOM()
+    editTodoInDOM()
     //toggleCheckboxes()
     //setSelects()
     //changeLocalStorage()
