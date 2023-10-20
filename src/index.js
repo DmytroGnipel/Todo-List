@@ -51,6 +51,10 @@ const content = document.querySelector('.content')
             const checkbox = document.createElement('input')
             checkbox.setAttribute('type', 'checkbox')
             checkbox.setAttribute('id', 'iScomplete')
+            checkbox.dataset.projectName = projectName
+            checkbox.dataset.id = todo.id
+            
+            
                 
             //compose div with todo
             todoDiv.append(todo.title, ' until ', todo.dueDate,  editButton, priorityChanger, label, checkbox, removeButton)
@@ -199,7 +203,7 @@ function fourFunctions() {
     removeTodoInDOM()
     createTodoInDOM()
     editTodoInDOM()
-    //toggleCheckboxes()
+    toggleCheckboxes()
     //setSelects()
     //changeLocalStorage()
     
@@ -210,12 +214,14 @@ function toggleCheckboxes() {
 const checkboxes = document.querySelectorAll('input[type=checkbox]')
 for (const checkbox of checkboxes)
 checkbox.addEventListener('click', function() {
-    let targetTodo = todoList[this.dataset.name][this.dataset.number]
+    const targetTodo = todoList[this.dataset.projectName][this.dataset.id]
     toggleCompleteness(targetTodo)
-    changeLocalStorage()
-    const para = document.querySelector(`p[data-number='${this.dataset.number}'][data-name=${this.dataset.name}]`)
-    if (targetTodo.isComplete) para.style.textDecoration = 'line-through'
-    else para.style.textDecoration = 'none'
+    fourFunctions()
+    console.log(targetTodo)
+    //changeLocalStorage()
+    //const para = document.querySelector(`p[data-number='${this.dataset.number}'][data-name=${this.dataset.name}]`)
+    //if (targetTodo.isComplete) para.style.textDecoration = 'line-through'
+    //else para.style.textDecoration = 'none'
     
 })}
 toggleCheckboxes()
