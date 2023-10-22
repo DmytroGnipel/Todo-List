@@ -1,6 +1,7 @@
 import { formatDistance, subDays } from "date-fns"
 
 const defaultTodoList = {
+    counterId: 3,
     UntilNewYear: [
         {
             title: 'Losing weight',
@@ -44,7 +45,6 @@ const chooceTodoList = () => {
         let todoINJsForman = localStorage.getItem('KeeForTodoInStorage')
         let todoFromStorage = JSON.parse(todoINJsForman)
         todoList = todoFromStorage
-        
     }
     return todoList
 }
@@ -53,16 +53,17 @@ const todoList = chooceTodoList()
 
 
 
-const counter = 3
+
 //create single todo
 const createTodo = (title, dueDate, description, notes, nameProject, id) => {
     const isComplete = false
     const priority = 'green'
-    if (!id) id = counter
+    if (!id) id = todoList.counterId
+    todoList.counterId++
     return {
         title, dueDate, description, notes, priority, isComplete, id, nameProject
     }
-    counter++
+    
 }
 
 
@@ -107,8 +108,11 @@ const addProject = (project) => {
 
 
 //change todo in the project
-const changeTodo = (projectName, IndexOldTodo, newTodo) => { 
-    todoList[projectName][IndexOldTodo] = newTodo
+const changeTodo = (todoId, projectName, newTodo) => {
+    const targetTodo = searchTodobyId(todoId, projectName)
+    const project = todoList[projectName]
+    const indexTodo = project.indexOf(targetTodo)
+    todoList[projectName][indexTodo] = newTodo
 }
 
 const toggleCompleteness = (todo) => {

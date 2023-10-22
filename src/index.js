@@ -7,6 +7,7 @@ cleaning()
 const content = document.querySelector('.content')
 //loop for arrangement projects
     for (const projectName in todoList) {
+        if (projectName !== 'counterId') {
         const projectDiv = document.createElement('div')
         projectDiv.classList.add('projectDiv')
         const projectDivHeader = document.createElement('h4')
@@ -67,7 +68,7 @@ const content = document.querySelector('.content')
         addTodoButton.classList.add('addTodoButton')
         addTodoButton.dataset.projectName = projectName
         projectDiv.append(addTodoButton)   
-        
+    }   
     }
 }
 arrangeProjects()
@@ -111,6 +112,7 @@ document.querySelector('.addProjectLink').addEventListener('click', function () 
             alert('Your project must to have a name')
         }
     })
+    
 })
 
 //create new todo for a project in the DOM
@@ -160,7 +162,7 @@ function editTodoInDOM () {
             acceptButton.addEventListener('click', () => {
                 const newTodo = createTodo(inputs[0].value, inputs[1].value, inputs[2].value,
                 inputs[3].value, this.dataset.projectName, this.dataset.id)
-                changeTodo(this.dataset.projectName, this.dataset.id, newTodo)
+                changeTodo(this.dataset.id, this.dataset.projectName, newTodo)
                 fourFunctions()
             })
         })
@@ -191,9 +193,6 @@ function popUp(amountOfInput) {
     content.appendChild(pop)
     closeLink.addEventListener('click', function(){
         pop.remove()
-        
-        
-
     })
 
 }
@@ -204,38 +203,33 @@ function fourFunctions() {
     createTodoInDOM()
     editTodoInDOM()
     toggleCheckboxes()
-    //setSelects()
-    //changeLocalStorage()
+    setSelects()
+    changeLocalStorage()
     
 }
 
+function toggleCheckboxes () {
+    const checkboxes = document.querySelectorAll('input[type=checkbox]')
+    for (const checkbox of checkboxes) {
+        checkbox.addEventListener('click', function () {
+            const targetTodo = searchTodobyId(this.dataset.id, this.dataset.projectName)
+            toggleCompleteness (targetTodo)
+            fourFunctions ()
+        })
+    }
+}
+toggleCheckboxes ()
 
-function toggleCheckboxes() {
-const checkboxes = document.querySelectorAll('input[type=checkbox]')
-for (const checkbox of checkboxes)
-checkbox.addEventListener('click', function() {
-    const targetTodo = todoList[this.dataset.projectName][this.dataset.id]
-    toggleCompleteness(targetTodo)
-    fourFunctions()
-    console.log(targetTodo)
-    //changeLocalStorage()
-    //const para = document.querySelector(`p[data-number='${this.dataset.number}'][data-name=${this.dataset.name}]`)
-    //if (targetTodo.isComplete) para.style.textDecoration = 'line-through'
-    //else para.style.textDecoration = 'none'
-    
-})}
-toggleCheckboxes()
-
-function setSelects() {
-const selects = document.querySelectorAll('select')
-for (const select of selects)
-select.addEventListener('change', function(){
-    let targetTodo = todoList[this.dataset.name][this.dataset.number]
-    changePriority(targetTodo, `${this.value}`)
-    const para = document.querySelector(`p[data-number='${this.dataset.number}'][data-name=${this.dataset.name}]`)
-	para.style.backgroundColor = targetTodo.priority
-    changeLocalStorage()
-})}
+function setSelects () {
+    const selects = document.querySelectorAll('select')
+    for (const select of selects) {
+        select.addEventListener('change', function () {
+            const targetTodo = searchTodobyId(this.dataset.id, this.dataset.projectName)
+            changePriority(targetTodo, `${this.value}`)
+            fourFunctions ()
+        })
+    }
+}
 setSelects()
 
 //function showInAMonth () {
