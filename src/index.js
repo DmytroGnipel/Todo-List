@@ -1,21 +1,22 @@
-import {todoList, createTodo, addTodo, createProject, removeTodo, addProject, 
-    toggleCompleteness, changePriority, changeTodo, searchTodobyId,
-     changeLocalStorage, filterTodo} from './logic'
+import {
+    todoList, createTodo, addTodo, createProject, removeTodo, addProject, toggleCompleteness, 
+    changePriority, changeTodo, searchTodobyId, changeLocalStorage, filterTodo
+} from './logic'
 
-//arrange divs with projects in the div 'content'
+//arrange divs with projects in the div 'content' (forming main page)
 function arrangeProjects () {
     cleaning ()
-    const content = document.querySelector('.content')
-    for (const projectName in todoList) {
-        if (projectName !== 'counterId') {
-            const projectDiv = document.createElement('div')
+    const content = document.querySelector('.content')//querying div for deployment
+    for (const projectName in todoList) {//loop for projects in todoList
+        if (projectName !== 'counterId') {//don't touch counter IDs that are in the same todoList, as a projects
+            const projectDiv = document.createElement('div')//each project has its own div, header (just below)
             projectDiv.classList.add('projectDiv')
             const projectDivHeader = document.createElement('h4')
             projectDivHeader.textContent = projectName
             projectDiv.append(projectDivHeader)
             content.append(projectDiv)
             const project = todoList[projectName]
-            arrangeTodoDivs (project, projectDiv)
+            arrangeTodoDivs (project, projectDiv) //function for arrangement todos in project
             //add button for creating new todo in the project
             const addTodoButton = createAddTodoButton(projectName)
             projectDiv.append(addTodoButton)
@@ -29,26 +30,25 @@ function cleaning () {
     document.querySelector('.content').innerHTML=''
 }
 
-
-
 //add new project
-document.querySelector('.addProjectLink').addEventListener('click', function () {
-    popUp(1)
-    const input = document.querySelector('input[type=text]')
-    input.placeholder = 'enter a name for new project'
-    document.querySelector('.popUp button').addEventListener('click', function () {
-        if (input.value) {
-            const newProject = createProject(input.value)
-            addProject(newProject)
-            fourFunctions()
-            console.log(todoList)
-        }
-        else {
-            alert('Your project must to have a name')
-        }
-    })
+;(function () {
+    document.querySelector('.addProjectLink').addEventListener('click', function () {
+        popUp(1)
+        const input = document.querySelector('input[type=text]')
+        input.placeholder = 'enter a name for new project'
+        document.querySelector('.popUp button').addEventListener('click', function () {
+            if (input.value) {
+                const newProject = createProject(input.value)
+                addProject(newProject)
+                someFunctions()
+            }
+            else {
+                alert('Your project must to have a name')
+            }
+        })
     
-})
+    })
+}())
 
 //create new todo for a project in the DOM
 function createTodoInDOM () {
@@ -66,14 +66,14 @@ function createTodoInDOM () {
             document.querySelector('.popUp button').addEventListener('click', function () {
                 let todo = createTodo(inputs[0].value, inputs[1].value, inputs[2].value, inputs[3].value, projectName)
                 addTodo(todo, todoList[projectName])
-                fourFunctions()
+                someFunctions()
             })  
         })
     }
 }
 createTodoInDOM ()
 
-//edit todos in the DOM//4
+//edit todos in the DOM
 function editTodoInDOM (by) {
     const buttons = document.querySelectorAll('.editButton')
     for (const button of buttons) {
@@ -98,19 +98,8 @@ function editTodoInDOM (by) {
                 const newTodo = createTodo(inputs[0].value, inputs[1].value, inputs[2].value,
                 inputs[3].value, this.dataset.projectName, this.dataset.id)
                 changeTodo(this.dataset.id, this.dataset.projectName, newTodo)
-                if (!by) fourFunctions()//if parameter is not passed then all projects and todos show in the screen
-                else {//if parameter is passed, only sorted todos show in the screen
-                    cleaning ()
-                    arrangeTodoDivs (filterTodo ()[by], document.querySelector('.content'))
-                    removeTodoInDOM (by)
-                    editTodoInDOM (by)
-                    setSelects (by)
-                    toggleCheckboxes (by)
-                    changeLocalStorage ()
-                    
-                    
-                }
-    
+                if (!by) someFunctions()//if parameter is not passed then all projects and todos show in the screen
+                else showSorted(by) //if parameter is passed only sorted todos show in the screen 
             })
         })
     }
@@ -129,7 +118,7 @@ function popUp (amountOfInput) {
     closeLink.textContent = 'X'
     closeLink.classList.add = ('closeLink')
     pop.append (closeLink)
-        for (let i = 0; i < amountOfInput; i++) {
+    for (let i = 0; i < amountOfInput; i++) {
         const para = document.createElement('p')
         const input = document.createElement('input')
         input.type = 'text'
@@ -142,8 +131,8 @@ function popUp (amountOfInput) {
     })
 
 }
-//four repeating functions
-function fourFunctions () {
+//some repeating functions
+function someFunctions () {
     arrangeProjects ()
     removeTodoInDOM ()
     createTodoInDOM ()
@@ -160,17 +149,9 @@ function toggleCheckboxes (by) {
         checkbox.addEventListener('click', function () {
             const targetTodo = searchTodobyId(this.dataset.id, this.dataset.projectName)
             toggleCompleteness (targetTodo)
-            if (!by) fourFunctions()//if parameter is not passed then all projects and todos show in the screen
-            else {//if parameter is passed only sorted todos show in the screen
-                cleaning ()
-                arrangeTodoDivs (filterTodo ()[by], document.querySelector('.content'))
-                removeTodoInDOM (by)
-                editTodoInDOM (by)
-                setSelects (by)
-                toggleCheckboxes (by)
-                changeLocalStorage ()
+            if (!by) someFunctions()//if parameter is not passed then all projects and todos show in the screen
+            else showSorted(by) //if parameter is passed only sorted todos show in the screen
                 
-            }
         })
     }
 }
@@ -182,17 +163,8 @@ function setSelects (by) {
         select.addEventListener('change', function () {
             const targetTodo = searchTodobyId(this.dataset.id, this.dataset.projectName)
             changePriority(targetTodo, `${this.value}`)
-            if (!by) fourFunctions()//if parameter is not passed then all projects and todos show in the screen
-            else {//if parameter is passed only sorted todos show in the screen
-                cleaning ()
-                arrangeTodoDivs (filterTodo ()[by], document.querySelector('.content'))
-                removeTodoInDOM (by)
-                editTodoInDOM (by)
-                setSelects (by)
-                toggleCheckboxes (by)
-                changeLocalStorage ()
-                
-            }
+            if (!by) someFunctions()//if parameter is not passed then all projects and todos show in the screen
+            else showSorted(by)//if parameter is passed only sorted todos show in the screen 
         })
     }
 }
@@ -278,17 +250,8 @@ function removeTodoInDOM (by) {
     for (const button of buttons) {
         button.addEventListener('click', function () {
             removeTodo(this.dataset.id, this.dataset.projectName)
-            if (!by) fourFunctions()//if parameter is not passed then all projects and todos show in the screen
-            else {//if parameter is passed only sorted todos show in the screen
-                cleaning ()
-                arrangeTodoDivs (filterTodo ()[by], document.querySelector('.content'))
-                removeTodoInDOM (by)
-                editTodoInDOM (by)
-                setSelects (by)
-                toggleCheckboxes (by)
-                changeLocalStorage ()
-                
-            }
+            if (!by) someFunctions()//if parameter is not passed then all projects and todos show in the screen
+            else showSorted(by)//if parameter is passed only sorted todos show in the screen 
         })
     }
 }
@@ -296,8 +259,13 @@ removeTodoInDOM()
 
 function show (by) {
     document.querySelector(`.${by}`).addEventListener('click', function () {
-    cleaning ()
     const array = filterTodo()[by]//array with sorted by parameter todos
+    if (!array.length) {
+        showThisDirectoryIsEmpty ()
+        createAllProjectsLink ()
+        return
+    }
+    cleaning ()
     createAllProjectsLink ()
     arrangeTodoDivs (array, document.querySelector('.content'))
     removeTodoInDOM (by)
@@ -307,6 +275,7 @@ function show (by) {
 })
 }
 
+;(function () {
 show ('month')
 show ('week')
 show ('day')
@@ -314,6 +283,7 @@ show ('red')
 show ('yellow')
 show ('complete')
 show ('uncomplete')
+}())
 
 function createAllProjectsLink () {
     if (!document.querySelector('.allProjectsLink')) {
@@ -329,8 +299,22 @@ function createAllProjectsLink () {
 function returnToMainPage () {
     document.querySelector('.allProjectsLink').addEventListener('click', function () {
         this.remove()
-        fourFunctions ()
+        someFunctions()
     })
+}
+
+function showSorted (byWhatSorted) {
+    cleaning ()
+    arrangeTodoDivs (filterTodo ()[byWhatSorted], document.querySelector('.content'))
+    removeTodoInDOM (byWhatSorted)
+    editTodoInDOM (byWhatSorted)
+    setSelects (byWhatSorted)
+    toggleCheckboxes (byWhatSorted)
+    changeLocalStorage ()
+}
+
+function showThisDirectoryIsEmpty () {
+    document.querySelector('.content').innerHTML='There is no tasks in this directory'
 }
 
 
