@@ -1,12 +1,15 @@
 import { formatDistance, subDays } from "date-fns"
-
+//create todoList with default project and three dummy todos.
 const defaultTodoList = {
-    counterId: 3,
+    //introduce counterId for numberning all subsequent todos. This counterId will be moving with todoList
+    //from app to localstorage and by doing that it will be ceep up counting even when user
+    //reload page or turn off computer / browser
+    counterId: 3, 
     UntilNewYear: [
         {
             title: 'Losing weight',
-            dueDate: '31.10.2023',
-            description: 'in order to have better look on my birthday I want to lose 5 kg until its date',
+            dueDate: '31.12.2023',
+            description: 'In order to have better look on my birthday I want to lose 5 kg until its date',
             notes: 'I want to lose wheigt by restrictings in my diet and conducting active excersises',
             isComplete: false,
             priority: 'yellow',
@@ -15,9 +18,9 @@ const defaultTodoList = {
         },
         {
             title: 'Learning songs',
-            dueDate: '31.10.2023', 
-            description: 'I want to perform at the New year"s party and because of that I have to learn at least 5 new songs',
-            notes: 'My favorite girl Sara very romatic, so I want learn Ed Sheerans songs about love',
+            dueDate: '21.11.2023', 
+            description: 'I want to give a performance at the New year"s party and because of that I have to learn at least 5 new songs',
+            notes: 'My favorite girl very romatic, so I want to learn Ed Sheerans songs about love',
             isComplete: false,
             priority: 'red',
             id: 1,
@@ -25,9 +28,9 @@ const defaultTodoList = {
         },
         {
             title: 'Complete Todo List',
-            dueDate: '31.10.2023',
-            description: 'This project from from theodinproject.com is a part of my long javascript journey',
-            notes: 'Day when I should finalize the project may be postponed. It depends on circumstances',
+            dueDate: '15.11.2023',
+            description: 'This project from theodinproject.com is a part of my long javascript learning journey',
+            notes: 'Day when I should finalize the project may be postponed. It depends on diferent circumstances',
             isComplete: false,
             priority: 'green',
             id: 2,
@@ -36,7 +39,9 @@ const defaultTodoList = {
     ]
 }
 
-const chooceTodoList = () => {
+const chooceTodoList = () => { //choose what todoList to use. 
+    //If localstorage is empty, then choose default todoList
+    //if localstorage isn't empty, then take todoList from there
     let todoList
     if (!localStorage.getItem('KeeForTodoInStorage')) {
         todoList = defaultTodoList
@@ -50,11 +55,8 @@ const chooceTodoList = () => {
 }
 const todoList = chooceTodoList()
 
-
-
-
-
-//create single todo
+//create single todo. Property isComplete by default is false, property priority bu default is green
+//This function have the counter, that will be counting todos Ids if Id pass to function as a parameter
 const createTodo = (title, dueDate, description, notes, nameProject, id) => {
     const isComplete = false
     const priority = 'green'
@@ -66,13 +68,12 @@ const createTodo = (title, dueDate, description, notes, nameProject, id) => {
     
 }
 
-
-
 //add single todo to a project
 const addTodo = (todo, project) => {
     project.push(todo)
 }
 
+//search target todo by Id and project name
 const searchTodobyId = (todoId, projectName) => {
     const project = todoList[projectName]
        for (const todo of project) {
@@ -113,21 +114,24 @@ const changeTodo = (todoId, projectName, newTodo) => {
     todoList[projectName][indexTodo] = newTodo
 }
 
+//toggle property isComplete from false to true and in the opposite dirrection
 const toggleCompleteness = (todo) => {
     if (todo.isComplete) todo.isComplete = false
     else todo.isComplete = true
     
 }
-
+//change property priority
 const changePriority = (todo, newPriority) => {
     todo.priority = newPriority
 }
-
-
+//change or rewrite todoList in localstorage after committing operations
 const changeLocalStorage = () => {
     localStorage.setItem('KeeForTodoInStorage', JSON.stringify(todoList))
 }
-
+//filtering or sorting todo by:
+//1. period of time - month, week, day are accessible
+//2. color of priority - red and yellow are accessible
+//2. completness - both complete and uncomplete are accessible
 const filterTodo = () => {
     const inAMonth = new Date(new Date().getFullYear(), 
     new Date().getMonth() + 1, new Date().getDate())
@@ -164,22 +168,6 @@ const filterTodo = () => {
     }
     return {month, week, day, red, yellow, complete, uncomplete}
 }
-
-
-/*const filterByPriority = () => {
-    const red = []
-    const yellow = []
-    for (const project in todoList) {
-        if (project !== 'counterId') {
-            for (const todo of todoList[project]) {
-                if (todo.priority === 'red') red.push(todo)
-                if (todo.priority === 'yellow') yellow.push(todo)
-            }
-        }
-    }
-    return {red, yellow}
-}
-*/
 
 export {todoList, createTodo, addTodo,
     createProject, addProject, toggleCompleteness, changePriority, removeTodo,
