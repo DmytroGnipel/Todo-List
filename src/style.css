@@ -20,10 +20,15 @@ body {
 .header {
     background-color: rosybrown;
     grid-area: 1 / 1 / 2 / -1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .side {
     background-color: pink;
+    padding: 2vh;
+    
 }
 
 .content {
@@ -76,9 +81,9 @@ button {
 }
 
 a {
-    color:white;
+    color:black;
     align-self: self-end;
-    font-size: 20px;
+    font-size: 18px;
     text-decoration: none;
 }
 

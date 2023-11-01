@@ -1,6 +1,8 @@
+import { format} from "date-fns"
+
 import {
     todoList, createTodo, addTodo, createProject, removeTodo, addProject, toggleCompleteness, 
-    changePriority, changeTodo, searchTodobyId, changeLocalStorage, filterTodo
+    changePriority, changeTodo, searchTodobyId, changeLocalStorage, filterTodo, greeting, showHowMuch
 } from './logic'
 
 //arrange divs with projects in the div 'content' (forming main page)
@@ -140,6 +142,7 @@ function someFunctions () {
     toggleCheckboxes ()
     setSelects ()
     changeLocalStorage ()
+    addAmountInFiltred ()
 
 }
 
@@ -239,7 +242,7 @@ function arrangeTodoDivs (array, place) {
         const priorityChanger = createPriorityChanger(todo)
         const span = getCompletenessChanger(todo)
         checkCompletnessTodo(todo, todoDiv)
-        todoDiv.append(todo.title, ' until ', todo.dueDate,  editButton, priorityChanger, span, removeButton)
+        todoDiv.append(todo.title, ' until ', dateFormatting (todo),  editButton, priorityChanger, span, removeButton)
         place.append(todoDiv)   
     } 
 }   
@@ -316,6 +319,35 @@ function showSorted (byWhatSorted) {
 function showThisDirectoryIsEmpty () {
     document.querySelector('.content').innerHTML='There is no tasks in this directory'
 }
+
+//greeting users
+;(function () {
+    document.querySelector('.header').textContent = greeting()
+}())
+
+function dateFormatting (todo) {
+    const arrayWithDueDate = todo.dueDate.split('.')
+    return format(new Date(arrayWithDueDate[2], arrayWithDueDate[1] - 1, 
+    arrayWithDueDate[0]), "do' 'MMMM' 'yyyy")
+}
+
+function addAmountInFiltred () {
+    const month = document.querySelector('.month')
+    const week = document.querySelector('.week')
+    const day = document.querySelector('.day')
+    const red = document.querySelector('.red')
+    const yellow = document.querySelector('.yellow')
+    const complete = document.querySelector('.complete')
+    const uncomplete = document.querySelector('.uncomplete')
+    month.textContent = `Current month (${showHowMuch().monthLength})`
+    week.textContent = `Current week (${showHowMuch().weekLength})`
+    day.textContent = `Today (${showHowMuch().dayLength})`
+    red.textContent = `Red priority (${showHowMuch().redLength})`
+    yellow.textContent = `Yellow priority (${showHowMuch().yellowLength})`
+    complete.textContent = `Complete (${showHowMuch().completeLength})`
+    uncomplete.textContent = `Uncomplete (${showHowMuch().uncompleteLength})`
+}
+addAmountInFiltred ()
 
 
             

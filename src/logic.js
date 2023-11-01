@@ -1,4 +1,5 @@
-import { formatDistance, subDays } from "date-fns"
+import { format} from "date-fns"
+
 //create todoList with default project and three dummy todos.
 const defaultTodoList = {
     //introduce counterId for numberning all subsequent todos. This counterId will be moving with todoList
@@ -166,10 +167,29 @@ const filterTodo = () => {
             
         }
     }
+
     return {month, week, day, red, yellow, complete, uncomplete}
 }
 
+const showHowMuch = () => {
+    const object = filterTodo ()
+    const monthLength = object.month.length
+    const weekLength = object.week.length
+    const dayLength = object.day.length
+    const redLength = object.red.length
+    const yellowLength = object.yellow.length
+    const completeLength = object.complete.length
+    const uncompleteLength = object.uncomplete.length
+return {
+    monthLength, weekLength, dayLength, redLength, yellowLength, completeLength, uncompleteLength    
+}
+   
+}
+console.log(showHowMuch())
+
+const greeting = () => format(new Date(), "'Hi there! Today is' eeee', 'do' 'MMMM' 'yyyy")
+
 export {todoList, createTodo, addTodo,
     createProject, addProject, toggleCompleteness, changePriority, removeTodo,
-    changeTodo, searchTodobyId, changeLocalStorage, filterTodo
+    changeTodo, searchTodobyId, changeLocalStorage, filterTodo, greeting, showHowMuch
 }
